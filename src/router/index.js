@@ -13,5 +13,6 @@ export default new Router({
     //   name: 'HelloWorld',
     //   component: HelloWorld
     // }
-  ]
+  ],
+  linkActiveClass: 'mui-active' // 类库
 })
