@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <mt-header fixed title="固定在顶部"></mt-header>
+    <mt-header fixed title="黑马程序员高端项目"></mt-header>
     <router-view/>
     <nav class="mui-bar mui-bar-tab">
       <router-link class="mui-tab-item" to="/home">
