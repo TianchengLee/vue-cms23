@@ -14,7 +14,7 @@
     <div class="content" v-html="newsInfo.content"></div>
 
     <!-- 评论子组件 -->
-    <comment></comment>
+    <comment :id="id"></comment>
   </div>
 </template>
 
