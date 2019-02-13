@@ -12,10 +12,15 @@
 
     <!-- 内容区域 -->
     <div class="content" v-html="newsInfo.content"></div>
+
+    <!-- 评论子组件 -->
+    <comment></comment>
   </div>
 </template>
 
 <script>
+// import comment from '../../components/comment'
+
 export default {
   data() {
     return {
@@ -33,7 +38,11 @@ export default {
         this.newsInfo = result.body.message[0];
       });
     }
-  }
+  },
+  // 注册私有组件
+  // components: {
+  //   comment
+  // }
 };
 </script>
 
