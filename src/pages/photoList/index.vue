@@ -10,13 +10,14 @@
             :class="['mui-control-item', { 'mui-active' : item.id == 0 } ]"
             v-for="(item) in categories"
             :key="item.id"
+            @click="getPhotoList(item.id)"
           >{{item.title}}</a>
         </div>
       </div>
     </div>
     <!-- 图片列表区域 -->
     <ul class="photo-list">
-      <router-link v-for="item in photoList" :key="item.id" :to="'/home/photoinfo/' + item.id" tag="li">
+      <router-link v-for="item in photoList" :key="item.id" :to="'/home/photoInfo/' + item.id" tag="li">
         <img v-lazy="item.img_url">
         <div class="info">
           <h1 class="info-title">{{ item.title }}</h1>
