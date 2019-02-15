@@ -2,9 +2,9 @@
   <div class="cmt-container">
     <h3>发表评论</h3>
     <hr>
-    <textarea placeholder="请输入要BB的内容（做多吐槽120字）" maxlength="120"></textarea>
+    <textarea v-model="commentContent" placeholder="请输入要BB的内容（做多吐槽120字）" maxlength="120"></textarea>
 
-    <mt-button type="primary" size="large">发表评论</mt-button>
+    <mt-button @click="postComment" type="primary" size="large">发表评论</mt-button>
 
     <div class="cmt-list">
       <div class="cmt-item" v-for="(item, i) in comments" :key="item.add_time">
@@ -21,11 +21,14 @@
 
 
 <script>
+import { Toast } from "mint-ui";
+
 export default {
   data() {
     return {
       pageIndex: 1, // 默认展示第一页数据
-      comments: [] // 所有的评论数据
+      comments: [], // 所有的评论数据
+      commentContent: ""
     };
   },
   created() {
@@ -39,6 +42,7 @@ export default {
         .then(result => {
           // this.comments = result.body.message;
           // 每当获取新评论数据的时候，不要把老数据清空覆盖，而是应该以老数据，拼接上新数据
+          // concat 方法连接数组, 不会修改原数组, 而是返回一个新数组
           this.comments = this.comments.concat(result.body.message);
         });
     },
@@ -46,6 +50,42 @@ export default {
       // 加载更多
       this.pageIndex++;
       this.getComments();
+    },
+    postComment() {
+      // 1. 想办法把用户输入的内容提交给服务器
+      //  1.1 双向数据绑定textarea, 以便获取数据
+      //  1.2 当用户点击按钮时, 获取数据, 并且做非空校验
+      if (this.commentContent.trim().length === 0)
+        return Toast("评论内容不能为空哦亲!");
+      //  1.3 发送ajax请求将内容提交给服务器
+      this.$http
+        .post("postcomment/" + this.id, { content: this.commentContent })
+        .then(result => {
+          // console.log(result.body)
+          Toast(result.body.message);
+          // // 2. 让用户看到最新的数据在1楼
+          // //  2.1 手动制造一个评论数据  加入当前comments中, vue会重新渲染
+          
+          // // add_time:"2019-02-15T02:58:21.000Z"
+          // // content:"aaaa"
+          // // user_name:"匿名用户"
+          // this.comments.unshift({
+          //   add_time: Date.now(),
+          //   content: this.commentContent,
+          //   user_name: '匿名用户',
+          // })
+
+          // this.commentContent = ''
+          //  2.2 重新调用getComments
+          // 调用getComments之前, 需要注意几个问题:
+          //   1. 原有的数据需要被清空否则会出现重复拼接
+          //   2. 将pageIndex重置为1
+          this.comments = []
+          this.pageIndex = 1
+          this.getComments()
+          // 清空评论输入框
+          this.commentContent = ''
+        });
     }
   },
   props: ["id"]
