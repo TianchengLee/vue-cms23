@@ -21,7 +21,6 @@ export default {
   },
   methods: {
     showToast() {
-      console.log('我被点了')
       // 如果使用的是js组件, 并且需要调用函数或对象的方法, 必须先引入对应的成员
       Toast('提示信息')
     }

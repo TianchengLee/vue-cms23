@@ -14,7 +14,6 @@
         <div class="cmt-body">{{ item.content === 'undefined' ? '此用户很懒，嘛都没说': item.content }}</div>
       </div>
     </div>
-
     <mt-button type="danger" size="large" plain @click="getMore">加载更多</mt-button>
   </div>
 </template>
@@ -65,7 +64,7 @@ export default {
           Toast(result.body.message);
           // // 2. 让用户看到最新的数据在1楼
           // //  2.1 手动制造一个评论数据  加入当前comments中, vue会重新渲染
-          
+
           // // add_time:"2019-02-15T02:58:21.000Z"
           // // content:"aaaa"
           // // user_name:"匿名用户"
@@ -80,11 +79,11 @@ export default {
           // 调用getComments之前, 需要注意几个问题:
           //   1. 原有的数据需要被清空否则会出现重复拼接
           //   2. 将pageIndex重置为1
-          this.comments = []
-          this.pageIndex = 1
-          this.getComments()
+          this.comments = [];
+          this.pageIndex = 1;
+          this.getComments();
           // 清空评论输入框
-          this.commentContent = ''
+          this.commentContent = "";
         });
     }
   },
