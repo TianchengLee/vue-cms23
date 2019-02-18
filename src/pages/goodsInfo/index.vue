@@ -127,6 +127,12 @@ export default {
     addToShopCar() {
       // 添加到购物车
       this.ballFlag = !this.ballFlag;
+      this.$store.commit('addToCar', {
+        id: this.goodsinfo.id,
+        count: this.buyCount,
+        price: this.goodsinfo.sell_price,
+        selected: true
+      })
     },
     // 开始执行动画之前所执行的钩子函数
     beforeEnter(el) {
