@@ -98,13 +98,65 @@ let store = new Vuex.Store({
       }
 
       localStorage.setItem('car', JSON.stringify(state.car))
-    }
+    },
+    // 这里的goodsInfo只需要有id和count即可
+    updateCount(state, goodsInfo) { // 用于更新数量
+      state.car.some(item => {
+        if (item.id === goodsInfo.id) {
+          item.count = goodsInfo.count
+          return true
+        }
+      })
+
+      localStorage.setItem('car', JSON.stringify(state.car))
+    },
+    removeFromCar(state, id) {
+      state.car.some((item, i) => {
+        if (item.id === id) {
+          state.car.splice(i, 1)
+          return true
+        }
+      })
+
+      localStorage.setItem('car', JSON.stringify(state.car))
+    },
+    // 这里的goodsInfo只需要有id和count即可
+    updateSelected(state, goodsInfo) { // 用于更新数量
+      state.car.some(item => {
+        if (item.id === goodsInfo.id) {
+          item.selected = !goodsInfo.selected
+          return true
+        }
+      })
+
+      localStorage.setItem('car', JSON.stringify(state.car))
+    },
   },
   getters: {
     totalCount(state) {
       let sum = 0
       state.car.forEach(item => sum += item.count)
       return sum
+    },
+    goodsCount(state) {
+      // 手动创造一个 id对应count格式的对象
+      //  let o = {87: 8, 88: 5}
+      //  o[88]
+      let o = {}
+      state.car.forEach(item => {
+        o[item.id] = item.count
+      })
+      return o
+    },
+    goodsSelected(state) {
+      // 手动创造一个 id对应count格式的对象
+      //  let o = {87: 8, 88: 5}
+      //  o[88]
+      let o = {}
+      state.car.forEach(item => {
+        o[item.id] = item.selected
+      })
+      return o
     }
   }
 })

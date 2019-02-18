@@ -1,6 +1,8 @@
 <template>
   <div id="app">
-    <mt-header fixed title="黑马程序员高端项目"></mt-header>
+    <mt-header fixed title="黑马程序员高端项目">
+      <mt-button v-show="hasBackBtn" @click="$router.go(-1)" slot="left" icon="back">返回</mt-button>
+    </mt-header>
     <transition name="app">
       <router-view/>
     </transition>
@@ -29,7 +31,26 @@
 
 <script>
 export default {
-  name: "App"
+  name: "App",
+  data() {
+    return {
+      hasBackBtn: this.$route.path !== "/home"
+    };
+  },
+  watch: {
+    // 第一个参数是新值, 第二个参数是旧值
+    $route(to, from) {
+      // console.log(to, from);
+      // if (to.path === "/home") {
+      //   this.hasBackBtn = false;
+      // } else {
+      //   this.hasBackBtn = true;
+      // }
+
+      // 高级
+      this.hasBackBtn = to.path !== "/home"
+    }
+  }
 };
 </script>
 
@@ -80,17 +101,17 @@ export default {
 }
 
 .mui-bar-tab .mui-tab-item1 .mui-icon {
-    top: 3px;
-    width: 24px;
-    height: 24px;
-    padding-top: 0;
-    padding-bottom: 0;
+  top: 3px;
+  width: 24px;
+  height: 24px;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 .mui-bar-tab .mui-tab-item1 .mui-icon ~ .mui-tab-label {
-    font-size: 11px;
-    display: block;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  font-size: 11px;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>
