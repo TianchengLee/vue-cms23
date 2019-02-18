@@ -1,6 +1,16 @@
 <template>
-  <div class="goods-list">
-    <!-- <router-link class="goods-item" v-for="item in goodslist" :key="item.id" :to="'/home/goodsinfo/' + item.id" tag="div">
+  <scroller
+    ref="sc"
+    refreshLayerColor="#0094ff"
+    loadingLayerColor="#0094ff"
+    :snapping="true"
+    noDataText="客官莫得了~~"
+    refreshText="用点力往下拉~~"
+    :on-refresh="refresh"
+    :on-infinite="infinite"
+  >
+    <div class="goods-list">
+      <!-- <router-link class="goods-item" v-for="item in goodslist" :key="item.id" :to="'/home/goodsinfo/' + item.id" tag="div">
       <img :src="item.img_url" alt="">
       <h1 class="title">{{ item.title }}</h1>
       <div class="info">
@@ -13,27 +23,26 @@
           <span>剩{{ item.stock_quantity }}件</span>
         </p>
       </div>
-    </router-link>-->
-    <!-- 在网页中，有两种跳转方式： -->
-    <!-- 方式1： 使用 a 标签 的形式叫做 标签跳转  -->
-    <!-- 方式2： 使用 window.location.href 的形式，叫做 编程式导航 -->
-    <div class="goods-item" v-for="item in goodslist" :key="item.id" @click="goDetail(item.id)">
-      <img :src="item.img_url" alt>
-      <h1 class="title">{{ item.title }}</h1>
-      <div class="info">
-        <p class="price">
-          <span class="now">￥{{ item.sell_price }}</span>
-          <span class="old">￥{{ item.market_price }}</span>
-        </p>
-        <p class="sell">
-          <span>热卖中</span>
-          <span>剩{{ item.stock_quantity }}件</span>
-        </p>
+      </router-link>-->
+      <!-- 在网页中，有两种跳转方式： -->
+      <!-- 方式1： 使用 a 标签 的形式叫做 标签跳转  -->
+      <!-- 方式2： 使用 window.location.href 的形式，叫做 编程式导航 -->
+      <div class="goods-item" v-for="item in goodslist" :key="item.id" @click="goDetail(item.id)">
+        <img :src="item.img_url" alt>
+        <h1 class="title">{{ item.title }}</h1>
+        <div class="info">
+          <p class="price">
+            <span class="now">￥{{ item.sell_price }}</span>
+            <span class="old">￥{{ item.market_price }}</span>
+          </p>
+          <p class="sell">
+            <span>热卖中</span>
+            <span>剩{{ item.stock_quantity }}件</span>
+          </p>
+        </div>
       </div>
     </div>
-
-    <mt-button type="danger" size="large" @click="getMore">加载更多</mt-button>
-  </div>
+  </scroller>
 </template>
 
 <script>
@@ -48,21 +57,26 @@ export default {
   created() {
     this.getGoodsList();
   },
+  mounted() {
+    // console.log(this.$refs)
+    this.$refs.sc.triggerPullToRefresh();
+  },
   methods: {
-    getGoodsList() {
+    getGoodsList(refresh) {
+      // 可能需要拼接, 也有可能需要覆盖
       // 获取商品列表
-      this.$http
+      return this.$http
         .get("getgoods?pageindex=" + this.pageindex)
         .then(result => {
-          if (result.body.status === 0) {
-            // this.goodslist = result.body.message;
+          if (refresh) {
+            this.goodslist = result.body.message;
+          } else {
             this.goodslist = this.goodslist.concat(result.body.message);
           }
+          // 下拉刷新组件都会提供一个api, 调用就可以停止下拉刷新
+          // 手动停止下拉刷新
+          // this.$refs.sc.finishPullToRefresh()
         });
-    },
-    getMore() {
-      this.pageindex++;
-      this.getGoodsList();
     },
     goDetail(id) {
       // 使用JS的形式进行路由导航
@@ -71,7 +85,7 @@ export default {
       // 其中： this.$route 是路由【参数对象】，所有路由中的参数， params, query 都属于它
       // 其中： this.$router 是一个路由【导航对象】，用它 可以方便的 使用 JS 代码，实现路由的 前进、后退、 跳转到新的 URL 地址
 
-      this.$router.push('/home/goodsInfo/' + id)
+      this.$router.push("/home/goodsInfo/" + id);
 
       // 1. 最简单的
       // this.$router.push("/home/goodsinfo/" + id);
@@ -79,12 +93,41 @@ export default {
       // this.$router.push({ path: "/home/goodsinfo/" + id });
       // 3. 传递命名的路由
       // this.$router.push({ name: "goodsinfo", params: { id } });
+    },
+    refresh() {
+      setTimeout(() => {
+        // console.log('我在刷新...')
+        // 刷新第一页的数据
+        // 1. 清空原数据
+        // this.goodslist = []
+        // 2. 重置索引pageindex 为 1
+        this.pageindex = 1;
+        // 3. 获取第一页的数据并渲染
+        // 4. 结束下拉刷新
+        this.getGoodsList(true).then(() => this.$refs.sc.finishPullToRefresh());
+        // 获取商品列表
+      }, 2000);
+    },
+    infinite() {
+      setTimeout(() => {
+        this.pageindex++;
+        this.getGoodsList().then(() =>
+          this.$refs.sc.finishInfinite(this.goodslist.length === 15)
+        );
+      }, 2000);
+      // console.log('我在上拉加载更多...')
     }
   }
 };
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
+.pull-to-refresh-layer {
+  margin-top: -20px !important;
+}
+._v-content {
+  padding-bottom: 40px;
+}
 .goods-list {
   display: flex;
   flex-wrap: wrap;

@@ -48,6 +48,10 @@ Vue.use(VuePreview)
 import Vuex from 'vuex'
 Vue.use(Vuex)
 
+// 安装vue-scroller组件
+import VueScroller from 'vue-scroller'
+Vue.use(VueScroller)
+
 // 页面刚加载时读取
 // 只要修改了数据就要保存
 let car = JSON.parse(localStorage.getItem('car') || '[]')
